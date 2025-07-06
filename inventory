@@ -1,0 +1,499 @@
+Lab -1: How to create custom inventory
+
+2 types of inventory:
+
+
+1. static inventory: 
+
+- manual intervention needed.
+- add servers manually, delete
+- we will be learning this currently.
+- used where servers have fixed life.
+- used extensively in industry.
+
+
+2. dynamic inventory:
+
+- used only in cloud computing.
+- scenarios where autoscaling is used
+
+
+- in ansible there is no pre-defined path for inventory as this is a custom data.
+
+  name: *
+  path: no pre-defined path
+
+- there can be many inventory files in a machine.
+
+
+2 ways to add hosts in inventory
+
+1. in groups : is a best practise
+
+2 outside groups
+
+eg:
+
+192.168.1.2
+192.168.1.3
+192.168.1.4
+
+# to list hosts in an inventory file
+# ansible group name --list-hosts -I path to inventory
+
+eg:
+admin@masterserver24:~$ ansible web --list-hosts
+[WARNING]: No inventory was parsed, only implicit localhost is available
+[WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
+[WARNING]: Could not match supplied host pattern, ignoring: web
+  hosts (0):
+admin@masterserver24:~$ ansible web --list-hosts -i inventory/
+  hosts (1):
+    192.168.1.10
+admin@masterserver24:~$ ansible dev --list-hosts -i inventory/
+  hosts (15):
+    192.168.10.1
+    192.168.10.2
+    192.168.10.3
+    192.168.10.4
+    192.168.10.5
+    192.168.10.6
+    192.168.10.7
+    192.168.10.8
+    192.168.10.9
+    192.168.10.10
+    192.168.10.11
+    192.168.10.12
+    192.168.10.13
+    192.168.10.14
+    192.168.10.15
+admin@masterserver24:~$ cat inventory/test
+
+[web]
+192.168.1.10
+
+[dev]
+192.168.10.[1:15]
+
+[prod]
+192.168.1.11
+vm[1:10].example.com
+
+
+
+- f there are multiple inventory files in a inventory folder then, you can mention the required group name along with folder. All the files will get loaded in the memory ,u will get the output.You need not specify a specific file.
+
+eG:
+
+admin@masterserver24:~$ ansible cloud --list-hosts -i inventory/host
+  hosts (5):
+    vm1
+    vm2
+    vm3
+    vm4
+    vm5
+admin@masterserver24:~$ ansible cloud --list-hosts -i inventory/
+  hosts (5):
+    vm1
+    vm2
+    vm3
+    vm4
+    vm5
+# we can also view host of multiple groups at same time.
+
+admin@masterserver24:~$ ansible cloud:web --list-hosts -i inventory/
+  hosts (6):
+    vm1
+    vm2
+    vm3
+    vm4
+    vm5
+    192.168.1.10
+
+
+#### we can also create group over a group
+
+admin@masterserver24:~$ ansible common --list-hosts -i inventory/test
+  hosts (3):
+    192.168.1.10
+    172.125.0.1
+    172.125.0.2
+admin@masterserver24:~$ cat inventory/test
+
+[web]
+192.168.1.10
+
+[database]
+172.125.0.1
+172.125.0.2
+
+[dev]
+192.168.10.[1:15]
+
+[prod]
+192.168.1.11
+vm[1:10].example.com
+
+[common:children] # if you dont write children word here then a common group willl be created and web and database will be considered its two machines
+web
+database
+
+
+### Variables are also included in inventory, we will cover that in chapter-4.
+
+
+#### Lab2: How to set inventory as default.
+
+admin@masterserver24:~$ ansible --version
+ansible [core 2.16.3]
+  config file = None
+  configured module search path = ['/home/admin/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python3/dist-packages/ansible
+  ansible collection location = /home/admin/.ansible/collections:/usr/share/ansible/collections
+  executable location = /usr/bin/ansible
+  python version = 3.12.3 (main, Jun 18 2025, 17:59:45) [GCC 13.3.0] (/usr/bin/python3)
+  jinja version = 3.1.2
+  libyaml = True
+
+- default ansible inventory: /etc/ansible/hosts
+- you can make any inventory file as default.
+
+# to generate ansible.cfg file
+admin@masterserver24:~$ ansible-config init --disabled > /tmp/ansible.cfg
+
+admin@masterserver24:~$ ansible --version
+ansible [core 2.16.3]
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = ['/home/admin/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python3/dist-packages/ansible
+  ansible collection location = /home/admin/.ansible/collections:/usr/share/ansible/collections
+  executable location = /usr/bin/ansible
+  python version = 3.12.3 (main, Jun 18 2025, 17:59:45) [GCC 13.3.0] (/usr/bin/python3)
+  jinja version = 3.1.2
+  libyaml = True
+admin@masterserver24:~$ ansible all --list-hosts
+  hosts (34):
+    vm1
+    vm2
+    vm3
+    vm4
+    vm5
+    192.168.10.1
+    192.168.10.2
+    192.168.10.3
+    192.168.10.4
+    192.168.10.5
+    192.168.10.6
+    192.168.10.7
+    192.168.10.8
+    192.168.10.9
+    192.168.10.10
+    192.168.10.11
+    192.168.10.12
+    192.168.10.13
+    192.168.10.14
+    192.168.10.15
+    192.168.1.11
+    vm1.example.com
+    vm2.example.com
+    vm3.example.com
+    vm4.example.com
+    vm5.example.com
+    vm6.example.com
+    vm7.example.com
+    vm8.example.com
+    vm9.example.com
+    vm10.example.com
+    192.168.1.10
+
+##### How to change ansible.cfg file for the user.
+
+---> method-1
+admin@masterserver24:~$ ansible --version
+ansible [core 2.16.3]
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = ['/home/admin/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python3/dist-packages/ansible
+  ansible collection location = /home/admin/.ansible/collections:/usr/share/ansible/collections
+  executable location = /usr/bin/ansible
+  python version = 3.12.3 (main, Jun 18 2025, 17:59:45) [GCC 13.3.0] (/usr/bin/python3)
+  jinja version = 3.1.2
+  libyaml = True
+admin@masterserver24:~$ cp /etc/ansible/ansible.cfg /home/admin/.ansible.cfg
+admin@masterserver24:~$
+admin@masterserver24:~$ ansible --version
+ansible [core 2.16.3]
+  config file = /home/admin/.ansible.cfg
+  configured module search path = ['/home/admin/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python3/dist-packages/ansible
+  ansible collection location = /home/admin/.ansible/collections:/usr/share/ansible/collections
+  executable location = /usr/bin/ansible
+  python version = 3.12.3 (main, Jun 18 2025, 17:59:45) [GCC 13.3.0] (/usr/bin/python3)
+  jinja version = 3.1.2
+  libyaml = True
+
+
+--->method-2
+
+admin@masterserver24:~$ mkdir test
+admin@masterserver24:~$ cp /etc/ansible/ansible.cfg test/
+admin@masterserver24:~$ ansible --version
+ansible [core 2.16.3]
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = ['/home/admin/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python3/dist-packages/ansible
+  ansible collection location = /home/admin/.ansible/collections:/usr/share/ansible/collections
+  executable location = /usr/bin/ansible
+  python version = 3.12.3 (main, Jun 18 2025, 17:59:45) [GCC 13.3.0] (/usr/bin/python3)
+  jinja version = 3.1.2
+  libyaml = True
+admin@masterserver24:~$ cd test/
+admin@masterserver24:~/test$ ansible --version
+ansible [core 2.16.3]
+  config file = /home/admin/test/ansible.cfg
+  configured module search path = ['/home/admin/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python3/dist-packages/ansible
+  ansible collection location = /home/admin/.ansible/collections:/usr/share/ansible/collections
+  executable location = /usr/bin/ansible
+  python version = 3.12.3 (main, Jun 18 2025, 17:59:45) [GCC 13.3.0] (/usr/bin/python3)
+  jinja version = 3.1.2
+  libyaml = True
+
+--->method-3
+admin@masterserver24:~/test$ ansible --version
+ansible [core 2.16.3]
+  config file = /home/admin/test/ansible.cfg
+  configured module search path = ['/home/admin/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python3/dist-packages/ansible
+  ansible collection location = /home/admin/.ansible/collections:/usr/share/ansible/collections
+  executable location = /usr/bin/ansible
+  python version = 3.12.3 (main, Jun 18 2025, 17:59:45) [GCC 13.3.0] (/usr/bin/python3)
+  jinja version = 3.1.2
+  libyaml = True
+admin@masterserver24:~/test$ export = ANSIBLE_CONFIG=/home/admin/test/ansible.cfg
+-bash: export: `=': not a valid identifier
+admin@masterserver24:~/test$ export ANSIBLE_CONFIG=/home/admin/test/ansible.cfg
+
+
+#####Predence:
+
+1. export path
+2. current working directory
+3. ~/.ansible.cfg file
+4. /etc/ansible/ansible.cfg
+
+#####Ansible-navigator#########
+- When in doubt, use the ansible-navigator inventory command to verify a machine's
+presence in the inventory. In the following example, ansible-navigator inventory is run in
+stdout mode. The first query matches a host in the inventory, and the second does not.
+
+admin@masterserver24:~$ ansible-navigator inventory -i inventory/test --list
+{
+    "_meta": {
+        "hostvars": {}
+    },
+    "all": {
+        "children": [
+            "ungrouped",
+            "dev",
+            "prod",
+            "common"
+        ]
+    },
+    "common": {
+        "children": [
+            "web",
+            "database"
+        ]
+    },
+    "database": {
+        "hosts": [
+            "172.125.0.1",
+            "172.125.0.2"
+        ]
+    },
+    "dev": {
+        "hosts": [
+            "192.168.10.1",
+            "192.168.10.2",
+            "192.168.10.3",
+            "192.168.10.4",
+            "192.168.10.5",
+            "192.168.10.6",
+            "192.168.10.7",
+            "192.168.10.8",
+            "192.168.10.9",
+            "192.168.10.10",
+            "192.168.10.11",
+            "192.168.10.12",
+            "192.168.10.13",
+            "192.168.10.14",
+            "192.168.10.15"
+        ]
+    },
+    "prod": {
+        "hosts": [
+            "192.168.1.11",
+            "vm1.example.com",
+            "vm2.example.com",
+            "vm3.example.com",
+            "vm4.example.com",
+            "vm5.example.com",
+            "vm6.example.com",
+            "vm7.example.com",
+            "vm8.example.com",
+            "vm9.example.com",
+            "vm10.example.com"
+        ]
+    },
+    "web": {
+        "hosts": [
+            "192.168.1.10"
+        ]
+    }
+}
+admin@masterserver24:~$admin@masterserver24:~$ ansible-navigator inventory -i inventory/host --list
+{
+    "_meta": {
+        "hostvars": {}
+    },
+    "all": {
+        "children": [
+            "ungrouped",
+            "cloud"
+        ]
+    },
+    "cloud": {
+        "hosts": [
+            "vm1",
+            "vm2",
+            "vm3",
+            "vm4",
+            "vm5"
+        ]
+    }
+}
+
+
+admin@masterserver24:~$ ansible-navigator inventory inventory -m stdout --list
+{
+    "_meta": {
+        "hostvars": {}
+    },
+    "all": {
+        "children": [
+            "ungrouped",
+            "cloud",
+            "dev",
+            "prod",
+            "common"
+        ]
+    },
+    "cloud": {
+        "hosts": [
+            "vm1",
+            "vm2",
+            "vm3",
+            "vm4",
+            "vm5"
+        ]
+    },
+    "common": {
+        "children": [
+            "web",
+            "database"
+        ]
+    },
+    "database": {
+        "hosts": [
+            "172.125.0.1",
+            "172.125.0.2"
+        ]
+    },
+    "dev": {
+        "hosts": [
+            "192.168.10.1",
+            "192.168.10.2",
+            "192.168.10.3",
+            "192.168.10.4",
+            "192.168.10.5",
+            "192.168.10.6",
+            "192.168.10.7",
+            "192.168.10.8",
+            "192.168.10.9",
+            "192.168.10.10",
+            "192.168.10.11",
+            "192.168.10.12",
+            "192.168.10.13",
+            "192.168.10.14",
+            "192.168.10.15"
+        ]
+    },
+    "prod": {
+        "hosts": [
+            "192.168.1.11",
+            "vm1.example.com",
+            "vm2.example.com",
+            "vm3.example.com",
+            "vm4.example.com",
+            "vm5.example.com",
+            "vm6.example.com",
+            "vm7.example.com",
+            "vm8.example.com",
+            "vm9.example.com",
+            "vm10.example.com"
+        ]
+    },
+    "web": {
+        "hosts": [
+            "192.168.1.10"
+        ]
+    }
+}
+
+####Lab - 3 How to authenticate managed nodes.
+
+- check whether the control node is able to communicate to managed nodes.
+
+- How to authenticate:
+1. password based
+2. key based
+
+admin@masterserver24:~$ ansible all -m ping
+192.168.1.10 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+192.168.1.11 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+
+###After installing ssh-pass
+
+admin@masterserver24:~$ ansible all -m ping -u user1 -k
+SSH password:
+192.168.1.10 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+192.168.1.11 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+
+####Lab - 4 How to push configurations. 
+
+
