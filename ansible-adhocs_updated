@@ -1,0 +1,1618 @@
+Inventory:
+
+- masterserver24 : 192.168.1.9
+
+- node1server24 : 192.168.1.10
+- node2server24 : 192.168.1.11
+- node3server24 : 192.168.1.12
+
+
+
+
+
+
+#Ansible Adhocs: command method
+
+Syntax:
+
+ansible target_name  -m module -a 'key=value'
+
+eg:$ansible all -m copy -a 'src=justafile dest=/tmp'
+
+
+-To view default modules of python:
+
+$ansible-doc -l
+
+eg: 1 use of ansible module
+
+admin@masterserver24:~$ ansible all -m copy -a 'src=justafile dest=/tmp'
+192.168.1.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "e7509a8c032f3bc2a8df1df476f8ef03436185fa",
+    "dest": "/tmp/justafile",
+    "gid": 1001,
+    "group": "admin",
+    "md5sum": "d73b04b0e696b0945283defa3eee4538",
+    "mode": "0664",
+    "owner": "admin",
+    "size": 11,
+    "src": "/home/admin/.ansible/tmp/ansible-tmp-1751574790.0190437-13288-93544355888525/source",
+    "state": "file",
+    "uid": 1001
+}
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "e7509a8c032f3bc2a8df1df476f8ef03436185fa",
+    "dest": "/tmp/justafile",
+    "gid": 1001,
+    "group": "admin",
+    "md5sum": "d73b04b0e696b0945283defa3eee4538",
+    "mode": "0664",
+    "owner": "admin",
+    "size": 11,
+    "src": "/home/admin/.ansible/tmp/ansible-tmp-1751574790.051311-13289-90485590126664/source",
+    "state": "file",
+    "uid": 1001
+
+
+-- to view ansible modules
+$ansible-doc -l
+
+Modules for compute automation of linux:
+
+1.copy: it is used to transfer files from control to manage node.
+
+eg:
+$ansible all -m copy -a 'src=justafile dest=/tmp'
+ 
+$ ansible all -m copy -a 'content="Hi ansible" dest=/tmp/motd'
+192.168.1.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "3dd02de7d9991528c454814381cacd95dce96930",
+    "dest": "/tmp/motd",
+    "gid": 1001,
+    "group": "admin",
+    "md5sum": "d43ba22e06823bcfe4e393b4ac4bf340",
+    "mode": "0664",
+    "owner": "admin",
+    "size": 10,
+    "src": "/home/admin/.ansible/tmp/ansible-tmp-1751650424.8687272-2313-138447202111724/source",
+    "state": "file",
+    "uid": 1001
+}
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "3dd02de7d9991528c454814381cacd95dce96930",
+    "dest": "/tmp/motd",
+    "gid": 1001,
+    "group": "admin",
+    "md5sum": "d43ba22e06823bcfe4e393b4ac4bf340",
+    "mode": "0664",
+    "owner": "admin",
+    "size": 10,
+    "src": "/home/admin/.ansible/tmp/ansible-tmp-1751650425.592277-2314-236576942218362/source",
+    "state": "file",
+    "uid": 1001
+}
+
+
+$admin@masterserver24:~$ ansible all -m copy -a 'src=justafile dest=/opt'
+
+192.168.1.10 | FAILED! => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "checksum": "e7509a8c032f3bc2a8df1df476f8ef03436185fa",
+    "msg": "Destination /opt not writable"
+}
+192.168.1.11 | FAILED! => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "checksum": "e7509a8c032f3bc2a8df1df476f8ef03436185fa",
+    "msg": "Destination /opt not writable"
+
+###Normal user cant write data outside its own folder as per linux.Thats why we received Failed above
+
+$admin@masterserver24:~$ ansible all -m copy -a 'src=justafile dest=/opt/demo' -u root -k
+SSH password:
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "e7509a8c032f3bc2a8df1df476f8ef03436185fa",
+    "dest": "/opt/demo",
+    "gid": 0,
+    "group": "root",
+    "md5sum": "d73b04b0e696b0945283defa3eee4538",
+    "mode": "0644",
+    "owner": "root",
+    "size": 11,
+    "src": "/root/.ansible/tmp/ansible-tmp-1751651626.4419234-2833-129897501798007/source",
+    "state": "file",
+    "uid": 0
+}
+192.168.1.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "e7509a8c032f3bc2a8df1df476f8ef03436185fa",
+    "dest": "/opt/demo",
+    "gid": 0,
+    "group": "root",
+    "md5sum": "d73b04b0e696b0945283defa3eee4538",
+    "mode": "0644",
+    "owner": "root",
+    "size": 11,
+    "src": "/root/.ansible/tmp/ansible-tmp-1751651626.3394852-2832-248048953563702/source",
+    "state": "file",
+    "uid": 0
+
+
+$admin@masterserver24:~$ ansible all -m copy -a 'src=newone dest=/opt/demo' -b --become-method sudo
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+    "dest": "/opt/demo",
+    "gid": 0,
+    "group": "root",
+    "md5sum": "d41d8cd98f00b204e9800998ecf8427e",
+    "mode": "0644",
+    "owner": "root",
+    "size": 0,
+    "src": "/home/admin/.ansible/tmp/ansible-tmp-1751658261.9987533-4353-280616854317402/source",
+    "state": "file",
+    "uid": 0
+}
+192.168.1.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+    "dest": "/opt/demo",
+    "gid": 0,
+    "group": "root",
+    "md5sum": "d41d8cd98f00b204e9800998ecf8427e",
+    "mode": "0644",
+    "owner": "root",
+    "size": 0,
+    "src": "/home/admin/.ansible/tmp/ansible-tmp-1751658262.4319882-4352-109645633715767/source",
+    "state": "file",
+    "uid": 0
+}
+
+
+$admin@masterserver24:~$ ansible all -m copy -a 'src=newone dest=/opt/demo' -b
+192.168.1.11 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "checksum": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+    "dest": "/opt/demo",
+    "gid": 0,
+    "group": "root",
+    "mode": "0644",
+    "owner": "root",
+    "path": "/opt/demo",
+    "size": 0,
+    "state": "file",
+    "uid": 0
+}
+192.168.1.10 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "checksum": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+    "dest": "/opt/demo",
+    "gid": 0,
+    "group": "root",
+    "mode": "0644",
+    "owner": "root",
+    "path": "/opt/demo",
+    "size": 0,
+    "state": "file",
+    "uid": 0
+}
+
+
+$admin@masterserver24:~$ ansible all -m copy -a 'src=newone dest=/root mode=0755 owner=admin group=admin'
+192.168.1.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+    "dest": "/root/newone",
+    "gid": 1001,
+    "group": "admin",
+    "mode": "0755",
+    "owner": "admin",
+    "path": "/root/newone",
+    "size": 0,
+    "state": "file",
+    "uid": 1001
+}
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+    "dest": "/root/newone",
+    "gid": 1001,
+    "group": "admin",
+    "mode": "0755",
+    "owner": "admin",
+    "path": "/root/newone",
+    "size": 0,
+    "state": "file",
+    "uid": 1001
+}
+
+
+admin@masterserver24:~$ ansible all -m copy -a 'src=newone dest=/root mode=0755 owner=admin group=admin'
+192.168.1.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "c84eecb23cf9e58ab82482beadfa763f320ce35e",
+    "dest": "/root/newone",
+    "gid": 1001,
+    "group": "admin",
+    "md5sum": "1d6a4eff04f01ce9991494a0215ec49e",
+    "mode": "0755",
+    "owner": "admin",
+    "size": 7,
+    "src": "/home/admin/.ansible/tmp/ansible-tmp-1751704394.921422-7359-82197980062785/source",
+    "state": "file",
+    "uid": 1001
+}
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "c84eecb23cf9e58ab82482beadfa763f320ce35e",
+    "dest": "/root/newone",
+    "gid": 1001,
+    "group": "admin",
+    "md5sum": "1d6a4eff04f01ce9991494a0215ec49e",
+    "mode": "0755",
+    "owner": "admin",
+    "size": 7,
+    "src": "/home/admin/.ansible/tmp/ansible-tmp-1751704394.9433355-7360-264130636475434/source",
+    "state": "file",
+    "uid": 1001
+}
+
+****** ek baar jab ansible kisi node pe login kar gya to next time wo session uska 60 seconds ke liye open rahta hai.(written in ansible.cfg 'ControlPersist=60' )
+
+
+##### to copy a file from one location to other in managed node 
+
+$admin@masterserver24:~$ ansible web -m copy -a 'src=/etc/fstab dest=/tmp/ remote_src=yes'
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "38a2f18bb3b97de86fd13d049cdf45b721102070",
+    "dest": "/tmp/fstab",
+    "gid": 0,
+    "group": "root",
+    "md5sum": "496d1705edfd0d1735b15bf5a8775192",
+    "mode": "0644",
+    "owner": "root",
+    "size": 657,
+    "src": "/etc/fstab",
+    "state": "file",
+    "uid": 0
+}
+
+##### 'remote_src=yes' Tells Ansible not to upload /etc/fstab from your local machine.
+
+Instead, it assumes /etc/fstab already exists on the target host, and copies it to /tmp/fstab on the same target.
+
+
+########### when you are copying the same file but you want to take backup for already existing file.
+$admin@masterserver24:~$ ansible all -m copy -a 'src=file1 dest=/tmp backup=yes'
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "backup_file": "/tmp/file1.1664.2025-07-06@19:54:39~",
+    "changed": true,
+    "checksum": "6ee4fa69dc31708870b73d6cd29ac25ae6b920fa",
+    "dest": "/tmp/file1",
+    "gid": 0,
+    "group": "root",
+    "md5sum": "81052b858549ab8cc750dc5de6f8804d",
+    "mode": "0644",
+    "owner": "root",
+    "size": 29,
+    "src": "/home/admin/.ansible/tmp/ansible-tmp-1751831676.680612-1188-141849076126275/source",
+    "state": "file",
+    "uid": 0
+}
+192.168.1.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "backup_file": "/tmp/file1.1339.2025-07-06@19:54:39~",
+    "changed": true,
+    "checksum": "6ee4fa69dc31708870b73d6cd29ac25ae6b920fa",
+    "dest": "/tmp/file1",
+    "gid": 0,
+    "group": "root",
+    "md5sum": "81052b858549ab8cc750dc5de6f8804d",
+    "mode": "0644",
+    "owner": "root",
+    "size": 29,
+    "src": "/home/admin/.ansible/tmp/ansible-tmp-1751831676.5612848-1187-77285060585465/source",
+    "state": "file",
+    "uid": 0
+}
+ o/p #
+- -rw-r--r--  1 root root   29 Jul  6 19:54  file1
+-rw-r--r--  1 root root   77 Jul  6 19:53 'file1.1664.2025-07-06@19:54:39~'
+
+
+2.command: it executes the os commands.
+
+-This module works only in that system where python > 2.4 is installed.
+
+- command module will run only one command at one time.
+
+Eg:
+$admin@masterserver24:~$ ansible all -m command -a 'lsblk ; uptime'
+192.168.1.10 | FAILED | rc=32 >>
+lsblk: ;: not a block device
+lsblk: uptime: not a block devicenon-zero return code
+192.168.1.11 | FAILED | rc=32 >>
+lsblk: ;: not a block device
+lsblk: uptime: not a block devicenon-zero return code
+
+#The command module does not use a shell, so it cannot interpret shell operators like ;, &&, |, etc. It treats each word as a literal argument to the first command — in your case, it's calling:
+
+####to run a command in for more than one module:
+
+admin@masterserver24:~$ ansible web,prod -m command -a 'ls -l /root/newone'
+192.168.1.11 | CHANGED | rc=0 >>
+-rwxr-xr-x 1 admin admin 7 Jul  5 08:33 /root/newone
+192.168.1.10 | CHANGED | rc=0 >>
+-rwxr-xr-x 1 admin admin 7 Jul  5 08:33 /root/newone
+
+$admin@masterserver24:~$ ansible all -m command -a 'id'
+192.168.1.11 | CHANGED | rc=0 >>
+uid=1001(admin) gid=1001(admin) groups=1001(admin),100(users)
+192.168.1.10 | CHANGED | rc=0 >>
+uid=1001(admin) gid=1001(admin) groups=1001(admin),100(users)
+
+$admin@masterserver24:~$ ansible all -m command -a 'id' -b
+192.168.1.10 | CHANGED | rc=0 >>
+uid=0(root) gid=0(root) groups=0(root) #this o/p[ means that task ahs been done by user root
+192.168.1.11 | CHANGED | rc=0 >>
+uid=0(root) gid=0(root) groups=0(root)
+
+**** jab jab koi bhi aisa task remote account se na kara ke kisi aur account se karna hota hai ansible ke andar use case we use jboss
+
+eg: ansible all -m command -a 'id' -b --become-user jboss
+
+$admin@masterserver24:~$ ansible web -m command -a 'uptime'
+192.168.1.10 | CHANGED | rc=0 >>
+ 20:17:36 up 38 min,  1 user,  load average: 0.28, 0.08, 0.02
+
+$admin@masterserver24:~$ ansible web -m command -a 'lsblk'
+192.168.1.10 | CHANGED | rc=0 >>
+NAME                      MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sda                         8:0    0   25G  0 disk
+├─sda1                      8:1    0    1M  0 part
+├─sda2                      8:2    0    2G  0 part /boot
+└─sda3                      8:3    0   23G  0 part
+  └─ubuntu--vg-ubuntu--lv 252:0    0 11.5G  0 lvm  /
+
+-i = inventory
+-m = module
+-k = ssh password
+-a = argument/attributes
+-b = become(default method sudo)
+--become-user = switch any user account
+
+3.raw: works same as command module.
+- it is python independent.
+- it can be used where python version is < 2.4
+- we use it where machine is python independent.
+- Without python all modules cannot work except raw module.
+- This is the only module in ansible whish goes to the frontend machine and does not compile program in python.
+- It uses the default shell of the operating system.
+
+******
+OS: python is there default
+device: no python installed default and we don't need it because ansible compiles catalog on control node and then transfers , so python is not required in case of devices.
+But in case of operating system, modules first transfer and then compile, that's why python is required.
+
+$admin@masterserver24:~$ ansible all -m raw -a 'lsblk ; uptime'
+192.168.1.10 | CHANGED | rc=0 >>
+NAME                      MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sda                         8:0    0   25G  0 disk
+├─sda1                      8:1    0    1M  0 part
+├─sda2                      8:2    0    2G  0 part /boot
+└─sda3                      8:3    0   23G  0 part
+  └─ubuntu--vg-ubuntu--lv 252:0    0 11.5G  0 lvm  /
+ 20:31:12 up 51 min,  1 user,  load average: 0.02, 0.02, 0.00
+Shared connection to 192.168.1.10 closed.
+
+192.168.1.11 | CHANGED | rc=0 >>
+NAME                      MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sda                         8:0    0   25G  0 disk
+├─sda1                      8:1    0    1M  0 part
+├─sda2                      8:2    0    2G  0 part /boot
+└─sda3                      8:3    0   23G  0 part
+  └─ubuntu--vg-ubuntu--lv 252:0    0 11.5G  0 lvm  /
+ 20:31:12 up 51 min,  1 user,  load average: 0.08, 0.09, 0.03
+Shared connection to 192.168.1.11 closed.
+
+4.shell:used for executing any script files.
+
+$admin@masterserver24:~$ ansible all -m shell -a '/root/test.sh'
+192.168.1.10 | CHANGED | rc=0 >>
+helloworld
+192.168.1.11 | CHANGED | rc=0 >>
+helloworld
+
+
+5.file: touch/mkdir/chmod/chown/chrgrp/rm/softlink/hardlink
+eg:
+$admin@masterserver24:~$ ansible web -m file -a 'path=/tmp/data state=directory'
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "gid": 0,
+    "group": "root",
+    "mode": "0755",
+    "owner": "root",
+    "path": "/tmp/data",
+    "size": 4096,
+    "state": "directory",
+    "uid": 0
+}
+admin@masterserver24:~$ ansible web -m file -a 'path=/tmp/data state=hhjj'
+192.168.1.10 | FAILED! => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "msg": "value of state must be one of: absent, directory, file, hard, link, touch, got: hhjj"
+}
+
+$admin@masterserver24:~$ ansible web -m file -a 'path=/tmp/data state=absent'
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "path": "/tmp/data",
+    "state": "absent"
+}
+
+$admin@masterserver24:~$ ansible web -m file -a 'path=/tmp/data state=directory mode=0777 owner=root group=root'
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "gid": 0,
+    "group": "root",
+    "mode": "0777",
+    "owner": "root",
+    "path": "/tmp/data",
+    "size": 4096,
+    "state": "directory",
+    "uid": 0
+}
+
+admin@masterserver24:~$ ansible database -m file -a "path=/etc/yum.repos.d/client.repo state=absent"
+192.168.1.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "path": "/etc/yum.repos.d/client.repo",
+    "state": "absent"
+}
+
+6.fetch: it is opposite of copy: it can copy from managed node to control node.
+eg:
+$admin@masterserver24:~$ ansible all -m fetch -a 'src=/etc/passwd dest=backup'
+192.168.1.10 | CHANGED => {
+    "changed": true,
+    "checksum": "7e6239959d119f48ea0cbf2267ab439a88b62116",
+    "dest": "/home/admin/backup/192.168.1.10/etc/passwd",
+    "md5sum": "a74d39b109cfea47e61aef8cb61b7e75",
+    "remote_checksum": "7e6239959d119f48ea0cbf2267ab439a88b62116",
+    "remote_md5sum": null
+}
+192.168.1.11 | CHANGED => {
+    "changed": true,
+    "checksum": "7e6239959d119f48ea0cbf2267ab439a88b62116",
+    "dest": "/home/admin/backup/192.168.1.11/etc/passwd",
+    "md5sum": "a74d39b109cfea47e61aef8cb61b7e75",
+    "remote_checksum": "7e6239959d119f48ea0cbf2267ab439a88b62116",
+    "remote_md5sum": null
+}
+### it created a backup named folder on control node and brought data from managed node to control node.
+admin@masterserver24:~$ ls -lrth
+total 280K
+drwxrwxr-x 3 admin admin 4.0K Jun 28 05:10 git-projects
+-rw-rw-r-- 1 admin admin 242K Jul  2 03:35 ansible-navigator.log
+-rw-rw-r-- 1 admin admin   11 Jul  3 20:31 justafile
+drwxrwxr-x 2 admin admin 4.0K Jul  4 20:30 test
+-rw-rw-r-- 1 admin admin    7 Jul  5 08:12 newone
+drwxrwxr-x 2 admin admin 4.0K Jul  6 15:15 inventory
+-rw-rw-r-- 1 admin admin   29 Jul  6 19:53 file1
+-rw-rw-r-- 1 admin admin   30 Jul  6 20:36 test.sh
+drwxrwxr-x 4 admin admin 4.0K Jul  6 20:43 backup
+admin@masterserver24:~$ cd backup/;ll
+total 16
+drwxrwxr-x  4 admin admin 4096 Jul  6 20:43 ./
+drwxr-x--- 10 admin admin 4096 Jul  6 20:43 ../
+drwxrwxr-x  3 admin admin 4096 Jul  6 20:43 192.168.1.10/
+drwxrwxr-x  3 admin admin 4096 Jul  6 20:43 192.168.1.11
+
+
+7.apt
+
+admin@masterserver24:~$ ansible dev -m apt -a 'name=ftp state=latest' -b
+[WARNING]: No hosts matched, nothing to do
+admin@masterserver24:~$ ansible prod -m apt -a 'name=ftp state=latest' -b
+192.168.1.11 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "cache_update_time": 1752608716,
+    "cache_updated": false,
+    "changed": false
+}
+
+
+admin@masterserver24:~$ ansible web -m apt -a 'name=ftp state=absent' -b
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "stderr": "",
+    "stderr_lines": [],
+    "stdout": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nThe following packages will be REMOVED:\n  ftp\n0 upgraded, 0 newly installed, 1 to remove and 12 not upgraded.\nAfter this operation, 24.6 kB disk space will be freed.\n(Reading database ... \r(Reading database ... 5%\r(Reading database ... 10%\r(Reading database ... 15%\r(Reading database ... 20%\r(Reading database ... 25%\r(Reading database ... 30%\r(Reading database ... 35%\r(Reading database ... 40%\r(Reading database ... 45%\r(Reading database ... 50%\r(Reading database ... 55%\r(Reading database ... 60%\r(Reading database ... 65%\r(Reading database ... 70%\r(Reading database ... 75%\r(Reading database ... 80%\r(Reading database ... 85%\r(Reading database ... 90%\r(Reading database ... 95%\r(Reading database ... 100%\r(Reading database ... 124932 files and directories currently installed.)\r\nRemoving ftp (20230507-2build3) ...\r\n",
+    "stdout_lines": [
+        "Reading package lists...",
+        "Building dependency tree...",
+        "Reading state information...",
+        "The following packages will be REMOVED:",
+        "  ftp",
+        "0 upgraded, 0 newly installed, 1 to remove and 12 not upgraded.",
+        "After this operation, 24.6 kB disk space will be freed.",
+        "(Reading database ... ",
+        "(Reading database ... 5%",
+        "(Reading database ... 10%",
+        "(Reading database ... 15%",
+        "(Reading database ... 20%",
+        "(Reading database ... 25%",
+        "(Reading database ... 30%",
+        "(Reading database ... 35%",
+        "(Reading database ... 40%",
+        "(Reading database ... 45%",
+        "(Reading database ... 50%",
+        "(Reading database ... 55%",
+        "(Reading database ... 60%",
+        "(Reading database ... 65%",
+        "(Reading database ... 70%",
+        "(Reading database ... 75%",
+        "(Reading database ... 80%",
+        "(Reading database ... 85%",
+        "(Reading database ... 90%",
+        "(Reading database ... 95%",
+        "(Reading database ... 100%",
+        "(Reading database ... 124932 files and directories currently installed.)",
+        "Removing ftp (20230507-2build3) ..."
+    ]
+}
+
+
+
+8.yum
+
+admin@masterserver24:~$ ansible database -m yum -a 'name=ftp state=absent' -b
+192.168.1.12 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "msg": "Nothing to do",
+    "rc": 0,
+    "results": []
+}
+
+admin@masterserver24:~$ ansible database -m yum -a 'name=ftp state=latest' -b
+192.168.1.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "msg": "",
+    "rc": 0,
+    "results": [
+        "Installed: ftp-0.17-89.el9.x86_64"
+    ]
+}
+
+9.package: The package module in Ansible is a generic package manager abstraction, which works across different Linux distributions (RedHat, Debian, etc.).
+
+It is recommended when you want to write OS-independent playbooks, as it automatically uses the appropriate module underneath (like yum, dnf, or apt).
+
+admin@masterserver24:~$ ansible all -m package -a 'name=ftp state=latest use=apt' -b
+[WARNING]: Updating cache and auto-installing missing dependency: python3-apt
+192.168.1.12 | FAILED! => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "cmd": "apt-get update",
+    "msg": "[Errno 2] No such file or directory: b'apt-get'",
+    "rc": 2,
+    "stderr": "",
+    "stderr_lines": [],
+    "stdout": "",
+    "stdout_lines": []
+}
+192.168.1.10 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "cache_update_time": 1752646875,
+    "cache_updated": false,
+    "changed": false
+}
+192.168.1.11 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "cache_update_time": 1752608716,
+    "cache_updated": false,
+    "changed": false
+}
+
+admin@masterserver24:~$ ansible database -m package -a 'name=wget state=installed use=yum' -b
+192.168.1.12 | FAILED! => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "msg": "The Python 2 yum module is needed for this module. If you require Python 3 support use the `dnf` Ansible module instead."
+}
+admin@masterserver24:~$ ansible database -m package -a 'name=wget state=installed use=dnf' -b
+192.168.1.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "msg": "",
+    "rc": 0,
+    "results": [
+        "Installed: wget-1.21.1-8.el9.x86_64"
+    ]
+}
+
+10. Service Module: Daemon management
+
+admin@masterserver24:~$ ansible database -m service -a "name=httpd state=started enabled=true"
+192.168.1.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "enabled": true,
+    "name": "httpd",
+    "state": "started",
+    "status": {
+        "AccessSELinuxContext": "system_u:object_r:httpd_unit_file_t:s0",
+ 
+    }
+}
+
+
+admin@masterserver24:~$ ansible database -m service -a "name=httpd state=stopped enabled=false"
+192.168.1.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "enabled": false,
+    "name": "httpd",
+    "state": "stopped",
+    "status": {
+    }
+}
+
+11.lineinfile Module: works same as of sed command
+
+admin@masterserver24:~$ ansible all -m copy -a 'content="hello world" dest=/etc/motd'
+192.168.1.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "2aae6c35c94fcfb415dbe95f408b9ce91ee846ed",
+    "dest": "/etc/motd",
+    "gid": 0,
+    "group": "root",
+    "md5sum": "5eb63bbbe01eeed093cb22bb8f5acdc3",
+    "mode": "0644",
+    "owner": "root",
+    "secontext": "system_u:object_r:etc_t:s0",
+    "size": 11,
+    "src": "/home/admin/.ansible/tmp/ansible-tmp-1752875171.5297523-4480-58471377139990/source",
+    "state": "file",
+    "uid": 0
+}
+192.168.1.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "2aae6c35c94fcfb415dbe95f408b9ce91ee846ed",
+    "dest": "/etc/motd",
+    "gid": 0,
+    "group": "root",
+    "md5sum": "5eb63bbbe01eeed093cb22bb8f5acdc3",
+    "mode": "0644",
+    "owner": "root",
+    "size": 11,
+    "src": "/home/admin/.ansible/tmp/ansible-tmp-1752875172.9051092-4481-213733516568480/source",
+    "state": "file",
+    "uid": 0
+}
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "2aae6c35c94fcfb415dbe95f408b9ce91ee846ed",
+    "dest": "/etc/motd",
+    "gid": 0,
+    "group": "root",
+    "md5sum": "5eb63bbbe01eeed093cb22bb8f5acdc3",
+    "mode": "0644",
+    "owner": "root",
+    "size": 11,
+    "src": "/home/admin/.ansible/tmp/ansible-tmp-1752875172.9396825-4479-83841055159775/source",
+    "state": "file",
+    "uid": 0
+}
+admin@masterserver24:~$ ansible all -m command -a 'cat /etc/motd'
+192.168.1.10 | CHANGED | rc=0 >>
+hello world
+192.168.1.11 | CHANGED | rc=0 >>
+hello world
+192.168.1.12 | CHANGED | rc=0 >>
+hello world
+
+#######since copy module will override the present content if you write if you add a new line so we will use lineinfile module to append.
+
+admin@masterserver24:~$ ansible all -m lineinfile -a 'line="hello ansible" dest=/etc/motd'
+192.168.1.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "backup": "",
+    "changed": true,
+    "msg": "line added"
+}
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "backup": "",
+    "changed": true,
+    "msg": "line added"
+}
+192.168.1.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "backup": "",
+    "changed": true,
+    "msg": "line added"
+}
+
+admin@masterserver24:~$ ansible all -m lineinfile -a 'line="hello puppet" dest=/etc/motd insertafter=BOF'
+192.168.1.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "backup": "",
+    "changed": true,
+    "msg": "line added"
+}
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "backup": "",
+    "changed": true,
+    "msg": "line added"
+}
+192.168.1.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "backup": "",
+    "changed": true,
+    "msg": "line added"
+}
+
+admin@masterserver24:~$ ansible all -m command -a 'cat /etc/motd'
+192.168.1.11 | CHANGED | rc=0 >>
+hello puppet
+hello world
+hello ansible
+192.168.1.10 | CHANGED | rc=0 >>
+hello puppet
+hello world
+hello ansible
+192.168.1.12 | CHANGED | rc=0 >>
+hello puppet
+hello world
+hello ansible
+
+admin@masterserver24:~$ ansible all -m lineinfile -a 'line="hello puppet" dest=/etc/motd state=absent'
+192.168.1.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "backup": "",
+    "changed": true,
+    "found": 1,
+    "msg": "1 line(s) removed"
+}
+192.168.1.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "backup": "",
+    "changed": true,
+    "found": 1,
+    "msg": "1 line(s) removed"
+}
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "backup": "",
+    "changed": true,
+    "found": 1,
+    "msg": "1 line(s) removed"
+}
+
+admin@masterserver24:~$ ansible web -m lineinfile -a 'line="ram   ALL=(ALL)   NOPASSWD: ALL" dest=/etc/sudoers'
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "backup": "",
+    "changed": true,
+    "msg": "line added"
+}
+
+
+
+admin@masterserver24:~$ ansible web -m command -a 'cat /etc/sudoers'
+192.168.1.10 | CHANGED | rc=0 >>
+#
+# This file MUST be edited with the 'visudo' command as root.
+#
+# Please consider adding local content in /etc/sudoers.d/ instead of
+# directly modifying this file.
+#
+# See the man page for details on how to write a sudoers file.
+#
+Defaults        env_reset
+Defaults        mail_badpass
+Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
+
+# This fixes CVE-2005-4890 and possibly breaks some versions of kdesu
+# (#1011624, https://bugs.kde.org/show_bug.cgi?id=452532)
+Defaults        use_pty
+
+# This preserves proxy settings from user environments of root
+# equivalent users (group sudo)
+#Defaults:%sudo env_keep += "http_proxy https_proxy ftp_proxy all_proxy no_proxy"
+
+# This allows running arbitrary commands, but so does ALL, and it means
+# different sudoers have their choice of editor respected.
+#Defaults:%sudo env_keep += "EDITOR"
+
+# Completely harmless preservation of a user preference.
+#Defaults:%sudo env_keep += "GREP_COLOR"
+
+# While you shouldn't normally run git as root, you need to with etckeeper
+#Defaults:%sudo env_keep += "GIT_AUTHOR_* GIT_COMMITTER_*"
+
+# Per-user preferences; root won't have sensible values for them.
+#Defaults:%sudo env_keep += "EMAIL DEBEMAIL DEBFULLNAME"
+
+# "sudo scp" or "sudo rsync" should be able to use your SSH agent.
+#Defaults:%sudo env_keep += "SSH_AGENT_PID SSH_AUTH_SOCK"
+
+# Ditto for GPG agent
+#Defaults:%sudo env_keep += "GPG_AGENT_INFO"
+
+# Host alias specification
+
+# User alias specification
+
+# Cmnd alias specification
+
+# User privilege specification
+root    ALL=(ALL:ALL) ALL
+# Members of the admin group may gain root privileges
+%admin ALL=(ALL) ALL
+
+# Allow members of group sudo to execute any command
+%sudo   ALL=(ALL:ALL) ALL
+
+# See sudoers(5) for more information on "@include" directives:
+
+@includedir /etc/sudoers.d
+admin ALL=(ALL) NOPASSWD: ALL
+ram   ALL=(ALL)   NOPASSWD: ALL
+admin@masterserver24:~$
+
+##### to delete the line using regular expression:
+
+admin@masterserver24:~$ ansible web -m lineinfile -a 'regexp=^ram dest=/etc/sudoers state=absent'
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "backup": "",
+    "changed": true,
+    "found": 1,
+    "msg": "1 line(s) removed"
+}
+
+12.replace: to change patterns in files:
+
+
+13.get_url:jitne bhi internet based url ki downloading karni hoti hai wo ye karta hai.It works same as wget.
+
+admin@masterserver24:~$ ansible all -m get_url -a 'url=https://www.guru99.com/working-mongodb-indexes.html dest=/tmp'
+192.168.1.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum_dest": null,
+    "checksum_src": "6d431985a481319b9c00e1038b61dea9e3635034",
+    "dest": "/tmp/working-mongodb-indexes.html",
+    "elapsed": 0,
+    "gid": 0,
+    "group": "root",
+    "md5sum": "b52d98d85f99851af409a51cbddae713",
+    "mode": "0644",
+    "msg": "OK (unknown bytes)",
+    "owner": "root",
+    "size": 330886,
+    "src": "/home/admin/.ansible/tmp/ansible-tmp-1752964240.9350183-13671-272279054706045/tmpbqb9keke",
+    "state": "file",
+    "status_code": 200,
+    "uid": 0,
+    "url": "https://www.guru99.com/working-mongodb-indexes.html"
+}
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum_dest": null,
+    "checksum_src": "6d431985a481319b9c00e1038b61dea9e3635034",
+    "dest": "/tmp/working-mongodb-indexes.html",
+    "elapsed": 0,
+    "gid": 0,
+    "group": "root",
+    "md5sum": "b52d98d85f99851af409a51cbddae713",
+    "mode": "0644",
+    "msg": "OK (unknown bytes)",
+    "owner": "root",
+    "size": 330886,
+    "src": "/home/admin/.ansible/tmp/ansible-tmp-1752964240.9029222-13669-165317093626062/tmppq5hpyf6",
+    "state": "file",
+    "status_code": 200,
+    "uid": 0,
+    "url": "https://www.guru99.com/working-mongodb-indexes.html"
+}
+192.168.1.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum_dest": null,
+    "checksum_src": "6d431985a481319b9c00e1038b61dea9e3635034",
+    "dest": "/tmp/working-mongodb-indexes.html",
+    "elapsed": 10,
+    "gid": 0,
+    "group": "root",
+    "md5sum": "b52d98d85f99851af409a51cbddae713",
+    "mode": "0644",
+    "msg": "OK (unknown bytes)",
+    "owner": "root",
+    "secontext": "unconfined_u:object_r:user_home_t:s0",
+    "size": 330886,
+    "src": "/home/admin/.ansible/tmp/ansible-tmp-1752964240.9891307-13670-216313200023564/tmpzngfp1mx",
+    "state": "file",
+    "status_code": 200,
+    "uid": 0,
+    "url": "https://www.guru99.com/working-mongodb-indexes.html"
+}
+
+14.user: useradd/usermod/userdel
+
+admin@masterserver24:~$ ansible all -m web -m user -a 'name=user2 state=present uid=1010 group=user1'
+192.168.1.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "append": false,
+    "changed": true,
+    "comment": "",
+    "group": 1000,
+    "home": "/home/user2",
+    "move_home": false,
+    "name": "user2",
+    "shell": "/bin/sh",
+    "state": "present",
+    "uid": 1010
+}
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "append": false,
+    "changed": true,
+    "comment": "",
+    "group": 1000,
+    "home": "/home/user2",
+    "move_home": false,
+    "name": "user2",
+    "shell": "/bin/sh",
+    "state": "present",
+    "uid": 1010
+}
+192.168.1.12 | FAILED! => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "msg": "Group user1 does not exist
+
+admin@masterserver24:~$ ansible all -m web -m user -a 'name=user2 state=absent'
+192.168.1.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "force": false,
+    "name": "user2",
+    "remove": false,
+    "state": "absent"
+}
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "force": false,
+    "name": "user2",
+    "remove": false,
+    "state": "absent"
+}
+192.168.1.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "force": false,
+    "name": "user2",
+    "remove": false,
+    "state": "absent"
+}
+
+admin@masterserver24:~$ ansible all -m user -a "name=user5 state=present" -b
+192.168.1.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "comment": "",
+    "create_home": true,
+    "group": 1001,
+    "home": "/home/user5",
+    "name": "user5",
+    "shell": "/bin/bash",
+    "state": "present",
+    "system": false,
+    "uid": 1001
+}
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "comment": "",
+    "create_home": true,
+    "group": 1002,
+    "home": "/home/user5",
+    "name": "user5",
+    "shell": "/bin/sh",
+    "state": "present",
+    "system": false,
+    "uid": 1002
+}
+192.168.1.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "comment": "",
+    "create_home": true,
+    "group": 1002,
+    "home": "/home/user5",
+    "name": "user5",
+    "shell": "/bin/sh",
+    "state": "present",
+    "system": false,
+    "uid": 1002
+}
+
+admin@masterserver24:~$ ansible all -m user -a "name=john password='user5@12345' state=present" -b
+[WARNING]: The input password appears not to have been hashed. The 'password' argument must be encrypted for this module to work properly.
+192.168.1.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "comment": "",
+    "create_home": true,
+    "group": 1002,
+    "home": "/home/john",
+    "name": "john",
+    "password": "NOT_LOGGING_PASSWORD",
+    "shell": "/bin/bash",
+    "state": "present",
+    "system": false,
+    "uid": 1002
+}
+192.168.1.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "comment": "",
+    "create_home": true,
+    "group": 1003,
+    "home": "/home/john",
+    "name": "john",
+    "password": "NOT_LOGGING_PASSWORD",
+    "shell": "/bin/sh",
+    "state": "present",
+    "system": false,
+    "uid": 1003
+}
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "comment": "",
+    "create_home": true,
+    "group": 1003,
+    "home": "/home/john",
+    "name": "john",
+    "password": "NOT_LOGGING_PASSWORD",
+    "shell": "/bin/sh",
+    "state": "present",
+    "system": false,
+    "uid": 1003
+}
+
+15.group
+
+admin@masterserver24:~$ ansible all -m web -m group -a 'name=staff state=present gid=1015'
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "gid": 1015,
+    "name": "staff",
+    "state": "present",
+    "system": false
+}
+192.168.1.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "gid": 1015,
+    "name": "staff",
+    "state": "present",
+    "system": false
+}
+192.168.1.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "gid": 1015,
+    "name": "staff",
+    "state": "present",
+    "system": false
+}
+
+admin@masterserver24:~$ ansible all -m web -m group -a 'name=staff state=absent'
+192.168.1.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "name": "staff",
+    "state": "absent"
+}
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "name": "staff",
+    "state": "absent"
+}
+192.168.1.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "name": "staff",
+    "state": "absent"
+}
+
+
+16.setup: it collects system information from 
+the managed node.by default it gives information in json format.
+
+admin@masterserver24:~$ ansible all -m setup -a 'filter=*kernel*'
+192.168.1.11 | SUCCESS => {
+    "ansible_facts": {
+        "ansible_kernel": "6.8.0-60-generic",
+        "ansible_kernel_version": "#63-Ubuntu SMP PREEMPT_DYNAMIC Tue Apr 15 19:04:15 UTC 2025",
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false
+}
+192.168.1.10 | SUCCESS => {
+    "ansible_facts": {
+        "ansible_kernel": "6.8.0-63-generic",
+        "ansible_kernel_version": "#66-Ubuntu SMP PREEMPT_DYNAMIC Fri Jun 13 20:25:30 UTC 2025",
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false
+}
+192.168.1.12 | SUCCESS => {
+    "ansible_facts": {
+        "ansible_kernel": "5.14.0-598.el9.x86_64",
+        "ansible_kernel_version": "#1 SMP PREEMPT_DYNAMIC Tue Jul 8 16:37:49 UTC 2025",
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false
+}
+
+
+17.stat: It checks existence of data.
+
+admin@masterserver24:~$ ansible all -m stat -a 'path=/etc/abc.conf'
+192.168.1.12 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "stat": {
+        "exists": false
+    }
+}
+192.168.1.10 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "stat": {
+        "exists": false
+    }
+}
+192.168.1.11 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "stat": {
+        "exists": false
+    }
+}
+
+admin@masterserver24:~$ ansible all -m stat -a 'path=/etc/passwd'
+192.168.1.11 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "stat": {
+        "atime": 1752964518.4152339,
+        "attr_flags": "e",
+        "attributes": [
+            "extents"
+        ],
+        "block_size": 4096,
+        "xusr": false
+    }
+}
+192.168.1.10 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "stat": {
+        "atime": 1752964518.4577909,
+        "attr_flags": "e",
+        "attributes": [
+            "extents"
+        ],
+        "block_size": 4096,
+    }
+}
+192.168.1.12 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "stat": {
+        "atime": 1752932755.5904772,
+        "attr_flags": "",
+        "attributes": [],
+        "block_size": 4096,
+        "blocks": 8,
+    }
+}
+
+
+18.uri: url reachability testing
+
+admin@masterserver24:~$ ansible all -m uri -a 'url=http://api.example.com:8989'
+192.168.1.10 | FAILED! => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "elapsed": 0,
+    "msg": "Status code was -1 and not [200]: Request failed: <urlopen error [Errno -2] Name or service not known>",
+    "redirected": false,
+    "status": -1,
+    "url": "http://api.example.com:8989"
+}
+192.168.1.11 | FAILED! => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "elapsed": 0,
+    "msg": "Status code was -1 and not [200]: Request failed: <urlopen error [Errno -2] Name or service not known>",
+    "redirected": false,
+    "status": -1,
+    "url": "http://api.example.com:8989"
+}
+192.168.1.12 | FAILED! => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "elapsed": 0,
+    "msg": "Status code was -1 and not [200]: Request failed: <urlopen error [Errno -2] Name or service not known>",
+    "redirected": false,
+    "status": -1,
+    "url": "http://api.example.com:8989"
+}
+
+admin@masterserver24:~$ ansible all -m uri -a 'url=http://www.krnetworkcloud.org'
+192.168.1.11 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "cache_control": "max-age=2592000",
+    "changed": false,
+    "connection": "Upgrade, close",
+    "content_type": "text/html; charset=UTF-8",
+    "cookies": {},
+    "cookies_string": "",
+    "date": "Sat, 19 Jul 2025 22:49:30 GMT",
+    "elapsed": 1,
+    "expires": "Mon, 18 Aug 2025 22:49:30 GMT",
+    "link": "<https://krnetworkcloud.org/wp-json/>; rel=\"https://api.w.org/\", <https://krnetworkcloud.org/wp-json/wp/v2/pages/9>; rel=\"alternate\"; title=\"JSON\"; type=\"application/json\", <https://krnetworkcloud.org/>; rel=shortlink",
+    "msg": "OK (unknown bytes)",
+    "redirected": true,
+    "server": "Apache",
+    "status": 200,
+    "transfer_encoding": "chunked",
+    "upgrade": "h2,h2c",
+    "url": "https://krnetworkcloud.org/",
+    "vary": "Accept-Encoding,User-Agent",
+    "x_powered_by": "PHP/7.4.33"
+}
+192.168.1.10 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "cache_control": "max-age=2592000",
+    "changed": false,
+    "connection": "Upgrade, close",
+    "content_type": "text/html; charset=UTF-8",
+    "cookies": {},
+    "cookies_string": "",
+    "date": "Sat, 19 Jul 2025 22:49:30 GMT",
+    "elapsed": 2,
+    "expires": "Mon, 18 Aug 2025 22:49:30 GMT",
+    "link": "<https://krnetworkcloud.org/wp-json/>; rel=\"https://api.w.org/\", <https://krnetworkcloud.org/wp-json/wp/v2/pages/9>; rel=\"alternate\"; title=\"JSON\"; type=\"application/json\", <https://krnetworkcloud.org/>; rel=shortlink",
+    "msg": "OK (unknown bytes)",
+    "redirected": true,
+    "server": "Apache",
+    "status": 200,
+    "transfer_encoding": "chunked",
+    "upgrade": "h2,h2c",
+    "url": "https://krnetworkcloud.org/",
+    "vary": "Accept-Encoding,User-Agent",
+    "x_powered_by": "PHP/7.4.33"
+}
+192.168.1.12 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "cache_control": "max-age=2592000",
+    "changed": false,
+    "connection": "Upgrade, close",
+    "content_type": "text/html; charset=UTF-8",
+    "cookies": {},
+    "cookies_string": "",
+    "date": "Sat, 19 Jul 2025 22:49:30 GMT",
+    "elapsed": 2,
+    "expires": "Mon, 18 Aug 2025 22:49:30 GMT",
+    "link": "<https://krnetworkcloud.org/wp-json/>; rel=\"https://api.w.org/\", <https://krnetworkcloud.org/wp-json/wp/v2/pages/9>; rel=\"alternate\"; title=\"JSON\"; type=\"application/json\", <https://krnetworkcloud.org/>; rel=shortlink",
+    "msg": "OK (unknown bytes)",
+    "redirected": true,
+    "server": "Apache",
+    "status": 200,
+    "transfer_encoding": "chunked",
+    "upgrade": "h2,h2c",
+    "url": "https://krnetworkcloud.org/",
+    "vary": "Accept-Encoding,User-Agent",
+    "x_powered_by": "PHP/7.4.33"
+}
+
+
+19.parted: is used to create a partition
+
+admin@masterserver24:~$ ansible web -m parted -a 'device=/dev/sdb number=1 state=present'
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "disk": {
+        "dev": "/dev/sdb",
+        "logical_block": 512,
+        "model": "VBOX HARDDISK",
+        "physical_block": 512,
+        "size": 4194304.0,
+        "table": "msdos",
+        "unit": "kib"
+    },
+    "partitions": [
+        {
+            "begin": 1024.0,
+            "end": 4194304.0,
+            "flags": [],
+            "fstype": "",
+            "name": "",
+            "num": 1,
+            "size": 4193280.0,
+            "unit": "kib"
+        }
+    ],
+    "script": "unit KiB mklabel msdos mkpart primary 0% 100%"
+}
+
+**** We have not defined size above that is why a single partition of full size got created.
+
+20.filesystem: it is used to format filesystem
+
+admin@masterserver24:~$ ansible web -m filesystem -a 'device=/dev/sdb fstype=ext4'
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true
+}
+
+*** Here we have formatted the files system in exy4.
+Now we need to create mount point.
+
+admin@masterserver24:~$ ansible web -m file -a 'path=/opt/app state=directory'
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "gid": 0,
+    "group": "root",
+    "mode": "0755",
+    "owner": "root",
+    "path": "/opt/app",
+    "size": 4096,
+    "state": "directory",
+    "uid": 0
+}
+
+
+21.mount: to mount partitions.
+
+admin@masterserver24:/opt$ ansible web -m mount -a 'path=/opt/app src=/dev/sdb fstype=ext4 opts=default state=present'
+192.168.1.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "backup_file": "",
+    "boot": "yes",
+    "changed": true,
+    "dump": "0",
+    "fstab": "/etc/fstab",
+    "fstype": "ext4",
+    "name": "/opt/app",
+    "opts": "default",
+    "passno": "0",
+    "src": "/dev/sdb"
+}
+
+22.package:
+
+23.yum repository
